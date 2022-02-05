@@ -8,7 +8,6 @@ import com.breaktime.lab3.view.listen.ListenScreen
 import com.breaktime.lab3.view.login.LoginScreen
 import com.breaktime.lab3.view.main.MainScreen
 import com.breaktime.lab3.view.menu.MenuScreen
-import com.breaktime.lab3.view.onboarding.OnboardingScreen
 import com.breaktime.lab3.view.photo.PhotoScreen
 import com.breaktime.lab3.view.profile.ProfileScreen
 import com.breaktime.lab3.view.registration.RegistrationScreen
@@ -19,9 +18,6 @@ fun SetUpNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.Splash.route) {
         composable(Screen.Splash.route) {
             SplashScreen(navController = navController)
-        }
-        composable(Screen.Onboarding.route) {
-            OnboardingScreen(navController = navController)
         }
         composable(Screen.Login.route) {
             LoginScreen(navController = navController)
