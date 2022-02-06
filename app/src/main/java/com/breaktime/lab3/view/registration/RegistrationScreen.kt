@@ -1,6 +1,6 @@
 package com.breaktime.lab3.view.registration
 
-import android.util.Patterns
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,10 +23,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
 import com.breaktime.lab3.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 
 @Composable
 fun RegistrationScreen(navController: NavHostController) {
+    val viewModel = get<RegistrationViewModel>()
     val context = LocalContext.current
+    val isLoadingState = remember { mutableStateOf(false) }
+    initObservable(rememberCoroutineScope(), context, viewModel, isLoadingState, navController)
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -114,16 +123,9 @@ fun RegistrationScreen(navController: NavHostController) {
                     .padding(top = 40.dp)
                     .alpha(0.8f),
                 onClick = {
-                    if (isFieldsCorrect(name = name, email = email, password = password)) {
-                        navController.popBackStack()
-                        navController.navigate(Screen.Main.route)
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Incorrect fields data",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    viewModel.setEvent(
+                        RegistrationContract.Event.OnAuthButtonClick(name, email, password)
+                    )
                 }
             ) {
                 Text(
@@ -148,8 +150,7 @@ fun RegistrationScreen(navController: NavHostController) {
                 )
                 TextButton(
                     onClick = {
-                        navController.popBackStack()
-                        navController.navigate(Screen.Login.route)
+                        viewModel.setEvent(RegistrationContract.Event.OnLoginButtonClick)
                     }
                 )
                 {
@@ -162,10 +163,64 @@ fun RegistrationScreen(navController: NavHostController) {
                 }
             }
         }
+        if (isLoadingState.value) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(60.dp))
+            }
+        }
     }
 }
 
-private fun isFieldsCorrect(name: String, email: String, password: String): Boolean {
-    return name.isNotEmpty() && email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email)
-        .matches() && password.isNotEmpty()
+private fun initObservable(
+    composableScope: CoroutineScope,
+    context: Context,
+    viewModel: RegistrationViewModel,
+    isLoadingState: MutableState<Boolean>,
+    navController: NavHostController
+) {
+    composableScope.launch {
+        viewModel.uiState.collect {
+            composableScope.ensureActive()
+            when (it.registrationState) {
+                is RegistrationContract.RegistrationState.Success -> {
+                    navController.popBackStack()
+                    navController.navigate(Screen.Main.route)
+                    viewModel.clearState()
+                    composableScope.cancel()
+                }
+                is RegistrationContract.RegistrationState.Login -> {
+                    navController.popBackStack()
+                    navController.navigate(Screen.Login.route)
+                    viewModel.clearState()
+                    composableScope.cancel()
+                }
+                is RegistrationContract.RegistrationState.Idle -> {
+                    isLoadingState.value = false
+                }
+                is RegistrationContract.RegistrationState.Loading -> {
+                    isLoadingState.value = true
+                }
+            }
+        }
+    }
+    composableScope.launch {
+        viewModel.effect.collect {
+            composableScope.ensureActive()
+            when (it) {
+                is RegistrationContract.Effect.ShowIncorrectDataToast -> {
+                    Toast.makeText(
+                        context, it.message, Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is RegistrationContract.Effect.ShowWrongParamsToast -> {
+                    Toast.makeText(
+                        context, "Incorrect fields data", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 }
