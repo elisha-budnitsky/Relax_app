@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "889598272327",
+    "project_id": "relax-app-7b00c",
+    "storage_bucket": "relax-app-7b00c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889598272327:android:ed378c50a7f3c573052262",
+        "android_client_info": {
+          "package_name": "com.breaktime.lab3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889598272327-8dftcnkh0asl3j4srn7mla1j4prt71r9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh-XjBCEISbIeuB0__0FPTPGZYO7gEIlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889598272327-8dftcnkh0asl3j4srn7mla1j4prt71r9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
