@@ -20,14 +20,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
 import com.breaktime.lab3.navigation.Screen
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.get
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
+    val auth = get<FirebaseAuth>()
     var startLogoAnimation by remember { mutableStateOf(false) }
     val alphaLogoAnim = animateFloatAsState(
-        targetValue = if (startLogoAnimation) 1f else 0f,
-        animationSpec = tween(durationMillis = 1500)
+        targetValue = if (startLogoAnimation) 0f else 1f,
+        animationSpec = tween(durationMillis = 1000)
     )
     var startOnboardAnimation by remember { mutableStateOf(false) }
     val alphaOnboardAnim = animateFloatAsState(
@@ -36,9 +40,17 @@ fun SplashScreen(navController: NavHostController) {
     )
 
     LaunchedEffect(key1 = true) {
-        startLogoAnimation = true
+        val client = async { auth.currentUser }
         delay(2000)
-        startOnboardAnimation = true
+        val result = client.await()
+        if (result != null) {
+            navController.popBackStack()
+            navController.navigate(Screen.Main.route)
+        } else {
+            startLogoAnimation = true
+            delay(500)
+            startOnboardAnimation = true
+        }
     }
     Splash(alpha = alphaLogoAnim.value)
     Onboarding(
@@ -72,7 +84,8 @@ private fun Splash(alpha: Float) {
             contentScale = ContentScale.None,
             modifier = Modifier
                 .fillMaxSize()
-                .alpha(alpha = alpha)
+                .padding(top = (alpha * 200).dp)
+//                .alpha(alpha = alpha)
         )
     }
 }
