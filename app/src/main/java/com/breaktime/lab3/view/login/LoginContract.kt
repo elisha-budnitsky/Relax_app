@@ -6,9 +6,8 @@ import com.breaktime.lab3.view.base.UiState
 
 class LoginContract {
     sealed class Event : UiEvent {
-        data class OnAuthButtonClick(val email: String, val password: String) :
-            Event()
-
+        data class OnAuthButtonClick(val email: String, val password: String) : Event()
+        data class OnResetPasswordButtonClick(val email: String) : Event()
         object OnRegisterButtonClick : Event()
     }
 
@@ -25,6 +24,7 @@ class LoginContract {
 
     sealed class Effect : UiEffect {
         data class ShowIncorrectDataToast(val message: String) : Effect()
+        object ShowCheckEmailToast : Effect()
         object ShowWrongParamsToast : Effect()
     }
 }

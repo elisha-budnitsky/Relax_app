@@ -105,7 +105,9 @@ fun LoginScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = { }) {
+                TextButton(onClick = {
+                    viewModel.setEvent(LoginContract.Event.OnResetPasswordButtonClick(email))
+                }) {
                     Text(
                         modifier = Modifier.padding(horizontal = 25.dp),
                         text = "Forgot password?",
@@ -217,6 +219,11 @@ private fun initObservable(
                 is LoginContract.Effect.ShowWrongParamsToast -> {
                     Toast.makeText(
                         context, "Incorrect fields data", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is LoginContract.Effect.ShowCheckEmailToast -> {
+                    Toast.makeText(
+                        context, "Check your email", Toast.LENGTH_SHORT
                     ).show()
                 }
             }

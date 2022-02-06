@@ -24,16 +24,22 @@ class LoginViewModel(
             is LoginContract.Event.OnRegisterButtonClick -> {
                 setState { copy(loginState = LoginContract.LoginState.Register) }
             }
+            is LoginContract.Event.OnResetPasswordButtonClick -> {
+                resetPassword(event.email)
+            }
         }
     }
 
-    private fun isFieldsCorrect(email: String, password: String): Boolean {
-        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email)
-            .matches() && password.isNotEmpty()
+    private fun isEmailCorrect(email: String): Boolean {
+        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun isPasswordCorrect(password: String): Boolean {
+        return password.isNotEmpty()
     }
 
     private fun login(email: String, password: String) {
-        if (!isFieldsCorrect(email, password)) {
+        if (!(isEmailCorrect(email) && isPasswordCorrect(password))) {
             setEffect { LoginContract.Effect.ShowWrongParamsToast }
             return
         }
@@ -47,6 +53,24 @@ class LoginViewModel(
                     setState { copy(loginState = LoginContract.LoginState.Idle) }
                 }
             }
+        }
+    }
+
+    private fun resetPassword(email: String) {
+        if (!isEmailCorrect(email)) {
+            setEffect { LoginContract.Effect.ShowWrongParamsToast }
+            return
+        }
+        setState { copy(loginState = LoginContract.LoginState.Loading) }
+        auth.sendPasswordResetEmail(email).addOnCompleteListener {
+            if (it.isSuccessful) {
+                setEffect { LoginContract.Effect.ShowCheckEmailToast }
+            } else {
+                viewModelScope.launch {
+                    setEffect { LoginContract.Effect.ShowIncorrectDataToast(it.exception!!.message!!) }
+                }
+            }
+            setState { copy(loginState = LoginContract.LoginState.Idle) }
         }
     }
 
