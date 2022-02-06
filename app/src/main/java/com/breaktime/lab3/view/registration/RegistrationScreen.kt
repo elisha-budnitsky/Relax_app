@@ -1,5 +1,7 @@
 package com.breaktime.lab3.view.registration
 
+import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,8 +26,9 @@ import com.breaktime.lab3.navigation.Screen
 
 @Composable
 fun RegistrationScreen(navController: NavHostController) {
+    val context = LocalContext.current
     var name by remember { mutableStateOf("") }
-    var login by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
@@ -76,8 +80,8 @@ fun RegistrationScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(top = 10.dp)
                     .padding(horizontal = 25.dp),
-                value = login,
-                onValueChange = { login = it },
+                value = email,
+                onValueChange = { email = it },
                 label = { Text("Email", color = MaterialTheme.colors.primary) },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent,
@@ -110,8 +114,16 @@ fun RegistrationScreen(navController: NavHostController) {
                     .padding(top = 40.dp)
                     .alpha(0.8f),
                 onClick = {
-                    navController.popBackStack()
-                    navController.navigate(Screen.Main.route)
+                    if (isFieldsCorrect(name = name, email = email, password = password)) {
+                        navController.popBackStack()
+                        navController.navigate(Screen.Main.route)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Incorrect fields data",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             ) {
                 Text(
@@ -151,4 +163,9 @@ fun RegistrationScreen(navController: NavHostController) {
             }
         }
     }
+}
+
+private fun isFieldsCorrect(name: String, email: String, password: String): Boolean {
+    return name.isNotEmpty() && email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email)
+        .matches() && password.isNotEmpty()
 }
