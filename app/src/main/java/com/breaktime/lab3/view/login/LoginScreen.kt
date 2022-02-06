@@ -1,6 +1,6 @@
 package com.breaktime.lab3.view.login
 
-import android.util.Patterns
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,10 +23,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
 import com.breaktime.lab3.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
+    val viewModel = get<LoginViewModel>()
     val context = LocalContext.current
+    val isLoadingState = remember { mutableStateOf(false) }
+    initObservable(rememberCoroutineScope(), context, viewModel, isLoadingState, navController)
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Box(
@@ -113,20 +122,9 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(top = 40.dp)
                     .alpha(0.8f),
                 onClick = {
-                    if (isFieldsCorrect(
-                            email = email,
-                            password = password
-                        )
-                    ) {
-                        navController.popBackStack()
-                        navController.navigate(Screen.Main.route)
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Incorrect fields data",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    viewModel.setEvent(
+                        LoginContract.Event.OnAuthButtonClick(email, password)
+                    )
                 }
             ) {
                 Text(
@@ -151,8 +149,7 @@ fun LoginScreen(navController: NavHostController) {
                 )
                 TextButton(
                     onClick = {
-                        navController.popBackStack()
-                        navController.navigate(Screen.Registration.route)
+                        viewModel.setEvent(LoginContract.Event.OnRegisterButtonClick)
                     }
                 )
                 {
@@ -165,10 +162,64 @@ fun LoginScreen(navController: NavHostController) {
                 }
             }
         }
+        if (isLoadingState.value) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(60.dp))
+            }
+        }
     }
 }
 
-private fun isFieldsCorrect(email: String, password: String): Boolean {
-    return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email)
-        .matches() && password.isNotEmpty()
+private fun initObservable(
+    composableScope: CoroutineScope,
+    context: Context,
+    viewModel: LoginViewModel,
+    isLoadingState: MutableState<Boolean>,
+    navController: NavHostController
+) {
+    composableScope.launch {
+        viewModel.uiState.collect {
+            composableScope.ensureActive()
+            when (it.loginState) {
+                is LoginContract.LoginState.Success -> {
+                    navController.popBackStack()
+                    navController.navigate(Screen.Main.route)
+                    viewModel.clearState()
+                    composableScope.cancel()
+                }
+                is LoginContract.LoginState.Register -> {
+                    navController.popBackStack()
+                    navController.navigate(Screen.Registration.route)
+                    viewModel.clearState()
+                    composableScope.cancel()
+                }
+                is LoginContract.LoginState.Idle -> {
+                    isLoadingState.value = false
+                }
+                is LoginContract.LoginState.Loading -> {
+                    isLoadingState.value = true
+                }
+            }
+        }
+    }
+    composableScope.launch {
+        viewModel.effect.collect {
+            composableScope.ensureActive()
+            when (it) {
+                is LoginContract.Effect.ShowIncorrectDataToast -> {
+                    Toast.makeText(
+                        context, it.message, Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is LoginContract.Effect.ShowWrongParamsToast -> {
+                    Toast.makeText(
+                        context, "Incorrect fields data", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 }
