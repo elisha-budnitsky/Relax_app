@@ -85,7 +85,6 @@ private fun Splash(alpha: Float) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = (alpha * 200).dp)
-//                .alpha(alpha = alpha)
         )
     }
 }
