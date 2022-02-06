@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.breaktime.lab3.view.listen.ListenScreen
-import com.breaktime.lab3.view.menu.BottomBarScreen
+import com.breaktime.lab3.view.main.BottomBarScreen
 import com.breaktime.lab3.view.menu.MenuScreen
 import com.breaktime.lab3.view.profile.ProfileScreen
 
