@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.breaktime.lab3.navigation.SetUpNavGraph
+import com.breaktime.lab3.navigation.EnteringNavGraph
 import com.breaktime.lab3.ui.theme.Lab3Theme
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Lab3Theme {
                 navController = rememberNavController()
-                SetUpNavGraph(navController = navController)
+                EnteringNavGraph(navController = navController)
             }
         }
     }
