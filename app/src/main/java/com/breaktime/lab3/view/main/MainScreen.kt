@@ -22,10 +22,10 @@ import androidx.navigation.compose.rememberNavController
 import com.breaktime.lab3.navigation.BottomNavGraph
 
 @Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-    Scaffold(bottomBar = { BottomBar(navController = navController) }) {
-        BottomNavGraph(navController)
+fun MainScreen(navController: NavHostController) {
+    val bottomNavController = rememberNavController()
+    Scaffold(bottomBar = { BottomBar(navController = bottomNavController) }) {
+        BottomNavGraph(bottomNavController, navController)
     }
 }
 

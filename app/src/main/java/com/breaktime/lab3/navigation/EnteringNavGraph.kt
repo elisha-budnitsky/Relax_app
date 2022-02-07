@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.breaktime.lab3.view.login.LoginScreen
 import com.breaktime.lab3.view.main.MainScreen
+import com.breaktime.lab3.view.photo.PhotoScreen
 import com.breaktime.lab3.view.registration.RegistrationScreen
 import com.breaktime.lab3.view.splash.SplashScreen
 
@@ -22,7 +23,10 @@ fun EnteringNavGraph(navController: NavHostController) {
             RegistrationScreen(navController = navController)
         }
         composable(Screen.Main.route) {
-            MainScreen()
+            MainScreen(navController = navController)
+        }
+        composable(Screen.Photo.route) {
+            PhotoScreen(navController = navController)
         }
     }
 }
