@@ -9,10 +9,7 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,18 +92,6 @@ fun ProfileScreen(navController: NavHostController) {
             "Item 1",
             "Item 2",
             "Item 3",
-            "Item 4",
-            "Item 5",
-            "Item 1",
-            "Item 2",
-            "Item 3",
-            "Item 4",
-            "Item 5",
-            "Item 1",
-            "Item 2",
-            "Item 3",
-            "Item 4",
-            "Item 5",
         )
 
         LazyVerticalGrid(
@@ -144,6 +129,24 @@ fun ProfileScreen(navController: NavHostController) {
                                     .padding(start = 10.dp, top = 90.dp)
                             )
                         }
+                    }
+                }
+            }
+            item {
+                TextButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(7.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF7AAD77)),
+                    onClick = { }
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "+", fontSize = 40.sp, color = Color.White)
                     }
                 }
             }
