@@ -67,7 +67,7 @@ fun HomeScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = { viewModel.setEvent(HomeContract.Event.OnMenuButtonClick) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_menu_24),
                     contentDescription = "logo",
@@ -172,9 +172,7 @@ private fun initObservable(
         viewModel.uiState.collect {
             composableScope.ensureActive()
             when (it.homeState) {
-                is HomeContract.HomeState.Idle -> {
-
-                }
+                is HomeContract.HomeState.Idle -> {}
                 is HomeContract.HomeState.Menu -> {
                     navController.navigate(Screen.Menu.route)
                     viewModel.clearState()
