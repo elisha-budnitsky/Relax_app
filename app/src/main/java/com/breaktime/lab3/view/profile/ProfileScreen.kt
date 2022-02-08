@@ -1,7 +1,6 @@
 package com.breaktime.lab3.view.profile
 
 import android.content.Context
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +29,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.breaktime.lab3.R
 import com.breaktime.lab3.navigation.Screen
+import com.breaktime.lab3.view.photo.PhotoInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ensureActive
@@ -43,7 +43,7 @@ fun ProfileScreen(navController: NavHostController) {
     val viewModel = get<ProfileViewModel>()
     val context = LocalContext.current
     val isLoadingState = remember { mutableStateOf(false) }
-    val data = remember { mutableStateOf(viewModel.uriList as List<Pair<String, Uri>>) }
+    val data = remember { mutableStateOf(viewModel.uriList) }
     val updateList = remember { mutableStateOf(true) }
     initObservable(
         rememberCoroutineScope(),
@@ -128,12 +128,12 @@ fun ProfileScreen(navController: NavHostController) {
                     cells = GridCells.Adaptive(160.dp),
                     contentPadding = PaddingValues(8.dp)
                 ) {
-                    data.value.forEach { (time, image) ->
+                    data.value.forEach { PhotoInfo ->
                         item {
                             TextButton(
                                 onClick = {
                                     viewModel.setEvent(
-                                        ProfileContract.Event.OnOpenImageButtonClick(image)
+                                        ProfileContract.Event.OnOpenImageButtonClick(PhotoInfo)
                                     )
                                 },
                                 contentPadding = PaddingValues()
@@ -147,13 +147,13 @@ fun ProfileScreen(navController: NavHostController) {
                                     backgroundColor = Color.LightGray
                                 ) {
                                     Image(
-                                        painter = rememberImagePainter(image),
+                                        painter = rememberImagePainter(PhotoInfo.downloadLink),
                                         contentDescription = "photo",
                                         contentScale = ContentScale.Crop,
                                         modifier = Modifier.fillMaxSize()
                                     )
                                     Text(
-                                        text = time,
+                                        text = PhotoInfo.time,
                                         fontSize = 16.sp,
                                         textAlign = TextAlign.Left,
                                         color = Color.White,
@@ -201,7 +201,7 @@ private fun initObservable(
     context: Context,
     viewModel: ProfileViewModel,
     isLoadingState: MutableState<Boolean>,
-    dataWithUpdater: Pair<MutableState<List<Pair<String, Uri>>>, MutableState<Boolean>>,
+    dataWithUpdater: Pair<MutableState<MutableList<PhotoInfo>>, MutableState<Boolean>>,
     navController: NavHostController
 ) {
     composableScope.launch {
@@ -221,7 +221,7 @@ private fun initObservable(
                 }
                 is ProfileContract.ProfileState.Image -> {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                        "link", it.profileState.link
+                        "info", it.profileState.info
                     )
                     navController.navigate(Screen.Photo.route)
 

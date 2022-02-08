@@ -1,6 +1,7 @@
 package com.breaktime.lab3.di
 
 import com.breaktime.lab3.view.login.LoginViewModel
+import com.breaktime.lab3.view.photo.PhotoViewModel
 import com.breaktime.lab3.view.profile.ProfileViewModel
 import com.breaktime.lab3.view.registration.RegistrationViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -13,4 +14,5 @@ val appModule = module {
     single { RegistrationViewModel(get(), get()) }
     single { LoginViewModel(get()) }
     single { ProfileViewModel(get()) }
+    single { PhotoViewModel(get()) }
 }
