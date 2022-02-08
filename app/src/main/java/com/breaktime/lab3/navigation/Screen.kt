@@ -10,4 +10,8 @@ sealed class Screen(val route: String) {
     object Photo : Screen(route = "photo_screen")
     object Listen : Screen(route = "listen_screen")
     object Profile : Screen(route = "profile_screen")
+    object EditProfile : Screen(route = "edit_screen")
+    object CalculateBmi : Screen(route = "calculate_mbi_screen")
+    object AboutDeveloper : Screen(route = "about_screen")
+    object Guide : Screen(route = "guide_screen")
 }
