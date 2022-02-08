@@ -7,7 +7,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,13 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MoodItem(moodInfo: MoodInfo) {
-    var isSelected by remember { mutableStateOf(moodInfo.isSelected) }
+fun MoodItem(moodInfo: MoodInfo, viewModel: HomeViewModel) {
     TextButton(
         modifier = Modifier.padding(horizontal = 5.dp),
         onClick = {
-            moodInfo.isSelected = !moodInfo.isSelected
-            isSelected = !isSelected
+            viewModel.setEvent(HomeContract.Event.OnMoodButtonClick(moodInfo.mood))
         },
         contentPadding = PaddingValues()
     ) {
@@ -34,7 +32,7 @@ fun MoodItem(moodInfo: MoodInfo) {
                     .padding(7.dp),
                 shape = RoundedCornerShape(20.dp),
                 backgroundColor = Color.White,
-                border = if (isSelected) BorderStroke(3.dp, Color(0xFFFF5F5F)) else null
+                border = if (moodInfo.isSelected) BorderStroke(3.dp, Color(0xFFFF5F5F)) else null
             ) {
                 Icon(
                     painter = painterResource(moodInfo.image),

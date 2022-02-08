@@ -1,5 +1,6 @@
 package com.breaktime.lab3.di
 
+import com.breaktime.lab3.view.home.HomeViewModel
 import com.breaktime.lab3.view.login.LoginViewModel
 import com.breaktime.lab3.view.photo.PhotoViewModel
 import com.breaktime.lab3.view.profile.ProfileViewModel
@@ -15,4 +16,5 @@ val appModule = module {
     single { LoginViewModel(get()) }
     single { ProfileViewModel(get()) }
     single { PhotoViewModel(get()) }
+    single { HomeViewModel(get(), get()) }
 }
