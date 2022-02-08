@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.breaktime.lab3.view.about_developer.AboutScreen
 import com.breaktime.lab3.view.bmi.BmiScreen
 import com.breaktime.lab3.view.edit_profile.EditScreen
+import com.breaktime.lab3.view.first_enter.FirstEnterScreen
 import com.breaktime.lab3.view.guide.GuideScreen
 import com.breaktime.lab3.view.login.LoginScreen
 import com.breaktime.lab3.view.main.MainScreen
@@ -51,6 +52,9 @@ fun EnteringNavGraph(navController: NavHostController) {
         }
         composable(Screen.Guide.route) {
             GuideScreen(navController = navController)
+        }
+        composable(Screen.FirstEnter.route) {
+            FirstEnterScreen(navController = navController)
         }
     }
 }

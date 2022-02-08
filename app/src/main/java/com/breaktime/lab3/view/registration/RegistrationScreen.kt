@@ -187,7 +187,7 @@ private fun initObservable(
             when (it.registrationState) {
                 is RegistrationContract.RegistrationState.Success -> {
                     navController.popBackStack()
-                    navController.navigate(Screen.Main.route)
+                    navController.navigate(Screen.FirstEnter.route)
                     viewModel.clearState()
                     composableScope.cancel()
                 }

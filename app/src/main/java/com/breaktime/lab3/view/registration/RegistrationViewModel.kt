@@ -43,7 +43,9 @@ class RegistrationViewModel(
         setState { copy(registrationState = RegistrationContract.RegistrationState.Loading) }
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                val user = User(name, email, password)
+                User.user.name = name
+                User.user.email = email
+                val user = User.user
                 firebaseDatabase.getReference("Users").child(auth.currentUser!!.uid)
                     .setValue(user).addOnCompleteListener { task ->
                         if (task.isSuccessful) {

@@ -14,4 +14,5 @@ sealed class Screen(val route: String) {
     object CalculateBmi : Screen(route = "calculate_mbi_screen")
     object AboutDeveloper : Screen(route = "about_screen")
     object Guide : Screen(route = "guide_screen")
+    object FirstEnter : Screen(route = "first_enter_screen")
 }

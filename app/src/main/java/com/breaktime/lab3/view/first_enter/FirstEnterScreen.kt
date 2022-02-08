@@ -18,14 +18,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
+import com.breaktime.lab3.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 // TODO: come from sing up or if user don't have saved info
 @Composable
-fun FirstEnterScreen() {
+fun FirstEnterScreen(navController: NavHostController) {
+    val viewModel = get<FirstEnterViewModel>()
+    val isLoadingState = remember { mutableStateOf(false) }
+    initObservable(
+        rememberCoroutineScope(),
+        viewModel,
+        isLoadingState,
+        navController
+    )
     val phoneNumber = remember { mutableStateOf("") }
     val weight = remember { mutableStateOf("") }
     val pressure = remember { mutableStateOf("") }
@@ -63,7 +79,7 @@ fun FirstEnterScreen() {
             R.drawable.calendar,
             "08.03.1998",
             "finish",
-            pressure,
+            birthday,
             ::checkBirthday
         )
 
@@ -81,9 +97,19 @@ fun FirstEnterScreen() {
             GetDataScreen(screenData = birthdayData)
         }
         else -> {
-            println("finish")
-            // TODO: save data
-            // TODO: move to home
+            viewModel.setEvent(
+                FirstEnterContract.Event.OnFinishButtonClick(
+                    phoneNumber.value,
+                    weight.value,
+                    pressure.value,
+                    birthday.value
+                )
+            )
+            phoneNumber.value = ""
+            weight.value = ""
+            pressure.value = ""
+            birthday.value = ""
+
         }
     }
 }
@@ -170,6 +196,33 @@ private fun GetDataScreen(screenData: ScreenData) {
                     color = Color.White,
                     fontSize = 22.sp
                 )
+            }
+        }
+    }
+}
+
+private fun initObservable(
+    composableScope: CoroutineScope,
+    viewModel: FirstEnterViewModel,
+    isLoadingState: MutableState<Boolean>,
+    navController: NavHostController
+) {
+    composableScope.launch {
+        viewModel.uiState.collect {
+            composableScope.ensureActive()
+            when (it.firstEnterState) {
+                is FirstEnterContract.FirstEnterState.Success -> {
+                    navController.popBackStack()
+                    navController.navigate(Screen.Main.route)
+                    viewModel.clearState()
+                    composableScope.cancel()
+                }
+                is FirstEnterContract.FirstEnterState.Idle -> {
+                    isLoadingState.value = false
+                }
+                is FirstEnterContract.FirstEnterState.Loading -> {
+                    isLoadingState.value = true
+                }
             }
         }
     }
