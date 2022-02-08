@@ -2,6 +2,7 @@ package com.breaktime.lab3.view.listen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
@@ -83,36 +84,57 @@ private fun Listen() {
                     .fillMaxWidth()
                     .padding(vertical = 60.dp)
                     .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.SpaceAround
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_shuffle),
                     contentDescription = "logo",
-                    modifier = Modifier.size(35.dp),
-                    tint = Color.White
+                    modifier = Modifier
+                        .size(35.dp)
+                        .clickable {
+
+                        },
+                    tint = Color.White,
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_skip_previous),
                     contentDescription = "logo",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier
+                        .size(35.dp)
+                        .clickable {
+
+                        },
                     tint = Color.White
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_play),
                     contentDescription = "logo",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier
+                        .size(55.dp)
+                        .clickable {
+
+                        },
                     tint = Color.White
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_skip_next),
                     contentDescription = "logo",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier
+                        .size(35.dp)
+                        .clickable {
+
+                        },
                     tint = Color.White
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_repeat),
                     contentDescription = "logo",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier
+                        .size(35.dp)
+                        .clickable {
+
+                        },
                     tint = Color.White
                 )
             }
