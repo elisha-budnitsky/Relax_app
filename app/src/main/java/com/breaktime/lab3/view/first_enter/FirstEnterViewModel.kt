@@ -26,7 +26,11 @@ class FirstEnterViewModel(private val firebase: Firebase) :
         User.weight = weight
         User.pressure = pressure
         User.birthday = birthday
-        firebase.saveUserData(User)
+        firebase.saveUserData(
+            user = User,
+            onSuccess = {
+                setState { copy(firstEnterState = FirstEnterContract.FirstEnterState.Success) }
+            })
     }
 
     override fun clearState() {

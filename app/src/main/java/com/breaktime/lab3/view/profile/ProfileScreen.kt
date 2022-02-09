@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.breaktime.lab3.R
 import com.breaktime.lab3.data.User
+import com.breaktime.lab3.data.icon
 import com.breaktime.lab3.navigation.Screen
 import com.breaktime.lab3.view.photo.PhotoInfo
 import kotlinx.coroutines.CoroutineScope
@@ -93,7 +94,8 @@ fun ProfileScreen(navController: NavHostController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(R.drawable.background),
+                    painter = if (User.icon == null) painterResource(R.drawable.no_photo)
+                    else rememberImagePainter(User.icon),
                     contentDescription = "avatar",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

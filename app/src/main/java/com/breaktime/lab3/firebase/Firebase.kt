@@ -54,7 +54,6 @@ class Firebase(
         }
     }
 
-
     fun resetPassword(
         email: String,
         onSuccess: () -> Unit = {},
@@ -93,6 +92,35 @@ class Firebase(
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+    }
+
+    fun saveUserIcon(file: Uri, onSuccess: (Uri) -> Unit = {}, onError: (String) -> Unit = {}) {
+        val user = auth.currentUser
+        val userID = user!!.uid
+        val storageRef: StorageReference = firebaseStorage.reference
+        val mountainImagesRef =
+            storageRef.child("images/users/$userID/icon/${Calendar.getInstance().time.time}")
+        mountainImagesRef.putFile(file).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                mountainImagesRef.downloadUrl.addOnCompleteListener { loadingTask ->
+                    onSuccess(loadingTask.result!!)
+                }
+            } else onError(task.exception?.message ?: "")
+        }
+    }
+
+    fun loadUserIcon(onSuccess: () -> Unit = {}, onError: (String) -> Unit = {}) {
+        val user = auth.currentUser
+        val userID = user!!.uid
+        val storageRef = firebaseStorage.reference.storage.getReference("images/users/$userID/icon")
+        storageRef.listAll().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val lastImage = task.result!!.items.last()
+                println("download name  " + lastImage.name)
+                println("download name2  " + lastImage)
+                onSuccess()// todo add uri
+            } else onError(task.exception?.message ?: "")
+        }
     }
 
     fun saveUserData(user: User, onSuccess: () -> Unit = {}, onError: (String) -> Unit = {}) {

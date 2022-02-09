@@ -20,8 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.breaktime.lab3.R
 import com.breaktime.lab3.data.User
+import com.breaktime.lab3.data.icon
 import com.breaktime.lab3.navigation.Screen
 import com.breaktime.lab3.view.home.data.HoroscopeData
 import com.breaktime.lab3.view.home.data.MoodData
@@ -78,7 +80,8 @@ fun HomeScreen(navController: NavHostController) {
                 tint = Color.White
             )
             Image(
-                painter = painterResource(R.drawable.background),
+                painter = if (User.icon == null) painterResource(R.drawable.no_photo)
+                else rememberImagePainter(User.icon),
                 contentDescription = "avatar",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
