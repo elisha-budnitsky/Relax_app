@@ -16,7 +16,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 
-
 class HomeViewModel(private val firebase: Firebase) :
     BaseViewModel<HomeContract.Event, HomeContract.State, HomeContract.Effect>() {
     var horoscopeData: HoroscopeData? = null
