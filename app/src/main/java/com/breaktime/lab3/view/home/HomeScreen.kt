@@ -37,7 +37,6 @@ import org.koin.androidx.compose.get
 @Composable
 fun HomeScreen(navController: NavHostController) {
     val viewModel = get<HomeViewModel>()
-    val context = LocalContext.current
     val updateList = remember { mutableStateOf(true) }
     val updateMood = remember { mutableStateOf(true) }
     val recommendationData = remember {
@@ -48,7 +47,6 @@ fun HomeScreen(navController: NavHostController) {
     val moodList = remember { mutableStateOf(viewModel.moodData) }
     initObservable(
         rememberCoroutineScope(),
-        context,
         viewModel,
         updateList,
         updateMood,
@@ -100,7 +98,7 @@ fun HomeScreen(navController: NavHostController) {
                 .padding(start = 16.dp)
         )
         Text(
-            text = "Каким ты себя ощущаешь сегодня?",
+            text = "How do you feel today?",
             fontSize = 20.sp,
             color = Color.Gray,
             modifier = Modifier
@@ -124,7 +122,7 @@ fun HomeScreen(navController: NavHostController) {
             suggestionData.add(
                 SuggestionInfo(
                     "Horoscope",
-                    "Description bla bla bla bla bla",
+                    "Date of birth according to zodiac sign",
                     horoscopeData.description,
                     R.drawable.current_recommendation
                 )
@@ -134,7 +132,7 @@ fun HomeScreen(navController: NavHostController) {
             suggestionData.add(
                 SuggestionInfo(
                     "Current recommendation",
-                    "Description bla bla bla bla bla",
+                    "Mood recommendation for today",
                     todayData.content,
                     R.drawable.daily_recommendation
                 )
@@ -143,7 +141,7 @@ fun HomeScreen(navController: NavHostController) {
             suggestionData.add(
                 SuggestionInfo(
                     "Daily recommendation",
-                    "Description bla bla bla bla bla",
+                    "mood recommendation based on average scores",
                     dailyData.content,
                     R.drawable.horoscope
                 )
@@ -161,7 +159,6 @@ fun HomeScreen(navController: NavHostController) {
 
 private fun initObservable(
     composableScope: CoroutineScope,
-    context: Context,
     viewModel: HomeViewModel,
     updater: MutableState<Boolean>,
     updateMood: MutableState<Boolean>,

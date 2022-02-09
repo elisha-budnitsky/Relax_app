@@ -2,6 +2,8 @@ package com.breaktime.lab3.view.home
 
 import androidx.lifecycle.viewModelScope
 import com.breaktime.lab3.R
+import com.breaktime.lab3.data.dailySuggestions
+import com.breaktime.lab3.data.todaySuggestions
 import com.breaktime.lab3.view.base.BaseViewModel
 import com.breaktime.lab3.view.home.data.HoroscopeData
 import com.breaktime.lab3.view.home.data.Mood
@@ -31,12 +33,12 @@ class HomeViewModel(
     var todayData: MoodData? = null
 
     val moodData = listOf(
-        MoodInfo("Спокойным", R.drawable.ic_calm, false, Mood.CALM),
-        MoodInfo("Расслабленным", R.drawable.ic_relax, false, Mood.RELAX),
-        MoodInfo("Сосредоточенным", R.drawable.ic_focus, false, Mood.FOCUS),
-        MoodInfo("Взволнованным", R.drawable.ic_excited, false, Mood.EXCITED),
-        MoodInfo("Веселым", R.drawable.ic_fun, false, Mood.FUN),
-        MoodInfo("Грустным", R.drawable.ic_sadness, false, Mood.SADNESS)
+        MoodInfo("Calm", R.drawable.ic_calm, false, Mood.CALM),
+        MoodInfo("Relax", R.drawable.ic_relax, false, Mood.RELAX),
+        MoodInfo("Focus", R.drawable.ic_focus, false, Mood.FOCUS),
+        MoodInfo("Excited", R.drawable.ic_excited, false, Mood.EXCITED),
+        MoodInfo("Fun", R.drawable.ic_fun, false, Mood.FUN),
+        MoodInfo("Sadness", R.drawable.ic_sadness, false, Mood.SADNESS)
     )
 
     init {
@@ -136,12 +138,12 @@ class HomeViewModel(
     }
 
     private fun buildDailyData(ofterMood: Mood?): MoodData {
-        return MoodData("daily")
+        return MoodData(dailySuggestions[ofterMood]!!)
     }
 
     private fun getTodayData(mood: Mood) {
         saveMood(mood)
-        todayData = MoodData("today")
+        todayData = MoodData(todaySuggestions[mood]!!)
         setEffect {
             HomeContract.Effect.UpdateSuggestionList(
                 horoscopeData, todayData, dailyData
