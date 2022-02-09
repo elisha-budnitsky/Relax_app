@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
+import com.breaktime.lab3.data.User
 import com.breaktime.lab3.navigation.Screen
 import com.breaktime.lab3.view.home.data.HoroscopeData
 import com.breaktime.lab3.view.home.data.MoodData
@@ -91,7 +92,7 @@ fun HomeScreen(navController: NavHostController) {
             )
         }
         Text(
-            text = "С возвращение, Эмиль!",
+            text = "Welcome back, ${User.user.name}!",
             fontSize = 32.sp,
             color = Color.White,
             modifier = Modifier
