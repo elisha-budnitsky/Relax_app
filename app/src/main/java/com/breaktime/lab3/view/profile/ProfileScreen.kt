@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.breaktime.lab3.R
+import com.breaktime.lab3.data.User
 import com.breaktime.lab3.navigation.Screen
 import com.breaktime.lab3.view.photo.PhotoInfo
 import kotlinx.coroutines.CoroutineScope
@@ -107,11 +108,13 @@ fun ProfileScreen(navController: NavHostController) {
                         .padding(start = 30.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text("Name", fontSize = 24.sp, color = Color.White)
-                    Text("Age: 20", fontSize = 18.sp, color = Color.White)
-                    Text("Weight: 70kg", fontSize = 18.sp, color = Color.White)
-                    Text("Pressure: 120", fontSize = 18.sp, color = Color.White)
-                    Text("Phone: 120-80-90", fontSize = 18.sp, color = Color.White)
+                    println("user   " + User.user)
+                    Text(User.user.name, fontSize = 24.sp, color = Color.White)
+                    Text(User.user.birthday, fontSize = 18.sp, color = Color.White)
+                    Text("Weight: ${User.user.weight}", fontSize = 18.sp, color = Color.White)
+                    Text("Pressure: ${User.user.pressure}", fontSize = 18.sp, color = Color.White)
+                    Text("Phone: ${User.user.phone}", fontSize = 18.sp, color = Color.White)
+                    Text("Email: ${User.user.email}", fontSize = 18.sp, color = Color.White)
                 }
             }
 
