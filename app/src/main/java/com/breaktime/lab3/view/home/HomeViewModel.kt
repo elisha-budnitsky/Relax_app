@@ -4,29 +4,20 @@ import androidx.lifecycle.viewModelScope
 import com.breaktime.lab3.R
 import com.breaktime.lab3.data.dailySuggestions
 import com.breaktime.lab3.data.todaySuggestions
+import com.breaktime.lab3.firebase.Firebase
 import com.breaktime.lab3.view.base.BaseViewModel
 import com.breaktime.lab3.view.home.data.HoroscopeData
 import com.breaktime.lab3.view.home.data.Mood
 import com.breaktime.lab3.view.home.data.MoodData
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
-import java.text.SimpleDateFormat
-import java.util.*
 
 
-class HomeViewModel(
-    private val auth: FirebaseAuth,
-    private val firebaseDatabase: FirebaseDatabase
-) :
+class HomeViewModel(private val firebase: Firebase) :
     BaseViewModel<HomeContract.Event, HomeContract.State, HomeContract.Effect>() {
     var horoscopeData: HoroscopeData? = null
     var dailyData: MoodData? = null
@@ -95,48 +86,6 @@ class HomeViewModel(
         }
     }
 
-    private fun getDailyData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = auth.currentUser
-            val userID = user!!.uid
-            val rootRef = firebaseDatabase.reference
-            val listIdRef = rootRef.child("Users/$userID/moods/")
-            listIdRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val map = mutableMapOf(
-                        Mood.CALM to 0,
-                        Mood.RELAX to 0,
-                        Mood.FOCUS to 0,
-                        Mood.EXCITED to 0,
-                        Mood.FUN to 0,
-                        Mood.SADNESS to 0,
-                    )
-                    val sdf = SimpleDateFormat("dd:MM:yyyy", Locale.getDefault())
-                    val currentDate = sdf.format(Date())
-                    for (ds in dataSnapshot.children) {
-                        val value = ds.getValue(Mood::class.java)!!
-                        if (ds.key == currentDate) {
-                            getTodayData(value)
-                            setActiveMood(value)
-                        }
-                        map[value] = map[value]?.plus(1)!!
-                    }
-                    val ofterMood = map.maxByOrNull { it.value }?.key
-                    dailyData = buildDailyData(ofterMood)
-                    setEffect {
-                        HomeContract.Effect.UpdateSuggestionList(
-                            horoscopeData,
-                            todayData,
-                            dailyData
-                        )
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
-        }
-    }
-
     private fun buildDailyData(ofterMood: Mood?): MoodData {
         return MoodData(dailySuggestions[ofterMood]!!)
     }
@@ -151,18 +100,27 @@ class HomeViewModel(
         }
     }
 
+    private fun getDailyData() {
+        firebase.getDailyData(
+            onCurrentDate = { mood ->
+                getTodayData(mood)
+                setActiveMood(mood)
+            },
+            onFindDaily = { mood ->
+                dailyData = buildDailyData(mood)
+                setEffect {
+                    HomeContract.Effect.UpdateSuggestionList(
+                        horoscopeData,
+                        todayData,
+                        dailyData
+                    )
+                }
+            }
+        )
+    }
+
     private fun saveMood(mood: Mood) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = auth.currentUser
-            val userID = user!!.uid
-            val rootRef = firebaseDatabase.reference
-            val sdf = SimpleDateFormat("dd:MM:yyyy", Locale.getDefault())
-            val currentDate = sdf.format(Date())
-            val listIdRef = rootRef.child("Users/$userID/moods/")
-            val map: MutableMap<String?, Any> = HashMap()
-            map[currentDate] = mood
-            listIdRef.updateChildren(map)
-        }
+        firebase.saveMood(mood = mood)
     }
 
     override fun clearState() {

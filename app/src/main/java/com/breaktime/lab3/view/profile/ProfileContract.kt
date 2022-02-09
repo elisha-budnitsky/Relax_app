@@ -1,6 +1,5 @@
 package com.breaktime.lab3.view.profile
 
-import android.graphics.ImageDecoder
 import android.net.Uri
 import com.breaktime.lab3.view.base.UiEffect
 import com.breaktime.lab3.view.base.UiEvent

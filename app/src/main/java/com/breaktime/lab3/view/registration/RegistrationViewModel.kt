@@ -1,17 +1,10 @@
 package com.breaktime.lab3.view.registration
 
 import android.util.Patterns
-import androidx.lifecycle.viewModelScope
-import com.breaktime.lab3.data.User
+import com.breaktime.lab3.firebase.Firebase
 import com.breaktime.lab3.view.base.BaseViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.launch
 
-class RegistrationViewModel(
-    private val auth: FirebaseAuth,
-    private val firebaseDatabase: FirebaseDatabase
-) :
+class RegistrationViewModel(private val firebase: Firebase) :
     BaseViewModel<RegistrationContract.Event, RegistrationContract.State, RegistrationContract.Effect>() {
     override fun createInitialState(): RegistrationContract.State {
         return RegistrationContract.State(
@@ -41,31 +34,18 @@ class RegistrationViewModel(
             return
         }
         setState { copy(registrationState = RegistrationContract.RegistrationState.Loading) }
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                User.user.name = name
-                User.user.email = email
-                val user = User.user
-                firebaseDatabase.getReference("Users").child(auth.currentUser!!.uid)
-                    .setValue(user).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            viewModelScope.launch {
-                                setState { copy(registrationState = RegistrationContract.RegistrationState.Success) }
-                            }
-                        } else {
-                            viewModelScope.launch {
-                                setEffect { RegistrationContract.Effect.ShowIncorrectDataToast(task.exception!!.message!!) }
-                                setState { copy(registrationState = RegistrationContract.RegistrationState.Idle) }
-                            }
-                        }
-                    }
-            } else {
-                viewModelScope.launch {
-                    setEffect { RegistrationContract.Effect.ShowIncorrectDataToast(it.exception!!.message!!) }
-                    setState { copy(registrationState = RegistrationContract.RegistrationState.Idle) }
-                }
+        firebase.register(
+            name = name,
+            email = email,
+            password = password,
+            onSuccess = {
+                setState { copy(registrationState = RegistrationContract.RegistrationState.Success) }
+            },
+            onError = {
+                setEffect { RegistrationContract.Effect.ShowIncorrectDataToast(it) }
+                setState { copy(registrationState = RegistrationContract.RegistrationState.Idle) }
             }
-        }
+        )
     }
 
     override fun clearState() {

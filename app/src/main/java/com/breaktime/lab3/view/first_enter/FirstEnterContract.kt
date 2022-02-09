@@ -11,8 +11,7 @@ class FirstEnterContract {
             val weight: String,
             val pressure: String,
             val birthday: String
-        ) :
-            Event()
+        ) : Event()
     }
 
     data class State(
@@ -25,5 +24,5 @@ class FirstEnterContract {
         object Success : FirstEnterState()
     }
 
-    sealed class Effect : UiEffect {}
+    sealed class Effect : UiEffect
 }

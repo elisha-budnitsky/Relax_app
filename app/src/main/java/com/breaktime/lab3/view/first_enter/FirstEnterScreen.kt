@@ -67,7 +67,7 @@ fun FirstEnterScreen(navController: NavHostController) {
     val pressureData =
         ScreenData(
             "Enter your pressure",
-            R.drawable.weight,
+            R.drawable.preassure,
             "pressure",
             "next",
             pressure,
@@ -93,24 +93,16 @@ fun FirstEnterScreen(navController: NavHostController) {
         pressure.value.isEmpty() -> {
             GetDataScreen(screenData = pressureData)
         }
-        birthday.value.isEmpty() -> {
+        phoneNumber.value.isNotEmpty() && weight.value.isNotEmpty() && pressure.value.isNotEmpty() -> {
             GetDataScreen(screenData = birthdayData)
         }
-        else -> {
-            viewModel.setEvent(
-                FirstEnterContract.Event.OnFinishButtonClick(
-                    phoneNumber.value,
-                    weight.value,
-                    pressure.value,
-                    birthday.value
-                )
+    }
+    if (phoneNumber.value.isNotEmpty() && weight.value.isNotEmpty() && pressure.value.isNotEmpty() && birthday.value.isNotEmpty()) {
+        viewModel.setEvent(
+            FirstEnterContract.Event.OnFinishButtonClick(
+                phoneNumber.value, weight.value, pressure.value, birthday.value
             )
-            phoneNumber.value = ""
-            weight.value = ""
-            pressure.value = ""
-            birthday.value = ""
-
-        }
+        )
     }
 }
 
@@ -130,7 +122,8 @@ fun checkNumber(text: String): Boolean {
 }
 
 fun check3Number(text: String): Boolean {
-    return text.matches(Regex("[0-9]{1,3}"))
+    val isNumber = text.matches(Regex("[0-9]{1,3}"))
+    return if (isNumber) text.toInt() < 200 else false
 }
 
 @Composable

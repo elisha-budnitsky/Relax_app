@@ -2,9 +2,7 @@ package com.breaktime.lab3.view.menu
 
 import com.breaktime.lab3.view.base.BaseViewModel
 
-class MenuViewModel(
-) :
-    BaseViewModel<MenuContract.Event, MenuContract.State, MenuContract.Effect>() {
+class MenuViewModel : BaseViewModel<MenuContract.Event, MenuContract.State, MenuContract.Effect>() {
     override fun createInitialState(): MenuContract.State {
         return MenuContract.State(
             MenuContract.MenuState.Idle

@@ -18,7 +18,8 @@ class LoginContract {
     sealed class LoginState {
         object Idle : LoginState()
         object Loading : LoginState()
-        object Success : LoginState()
+        object Menu : LoginState()
+        object FirstEnter : LoginState()
         object Register : LoginState()
     }
 

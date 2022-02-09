@@ -33,7 +33,8 @@ fun EnteringNavGraph(navController: NavHostController) {
             MainScreen(navController = navController)
         }
         composable(Screen.Photo.route) {
-            val info = navController.previousBackStackEntry?.savedStateHandle?.get<PhotoInfo>("info")
+            val info =
+                navController.previousBackStackEntry?.savedStateHandle?.get<PhotoInfo>("info")
             info?.let {
                 PhotoScreen(navController = navController, info = info)
             }

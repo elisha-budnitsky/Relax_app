@@ -48,7 +48,6 @@ fun ExpandableItem(suggestionInfo: SuggestionInfo) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-//                    Text(text = suggestionInfo.title, fontSize = 24.sp)
                     Text(
                         text = suggestionInfo.description,
                         fontSize = 16.sp,

@@ -1,16 +1,10 @@
 package com.breaktime.lab3.view.first_enter
 
-import androidx.lifecycle.viewModelScope
 import com.breaktime.lab3.data.User
+import com.breaktime.lab3.firebase.Firebase
 import com.breaktime.lab3.view.base.BaseViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.launch
 
-class FirstEnterViewModel(
-    private val auth: FirebaseAuth,
-    private val firebaseDatabase: FirebaseDatabase
-) :
+class FirstEnterViewModel(private val firebase: Firebase) :
     BaseViewModel<FirstEnterContract.Event, FirstEnterContract.State, FirstEnterContract.Effect>() {
     override fun createInitialState(): FirstEnterContract.State {
         return FirstEnterContract.State(
@@ -28,23 +22,11 @@ class FirstEnterViewModel(
 
     private fun saveData(phone: String, weight: String, pressure: String, birthday: String) {
         setState { copy(firstEnterState = FirstEnterContract.FirstEnterState.Loading) }
-        User.user.phone = phone
-        User.user.weight = weight
-        User.user.pressure = pressure
-        User.user.birthday = birthday
-        val user = User.user
-        firebaseDatabase.getReference("Users").child(auth.currentUser!!.uid)
-            .setValue(user).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    viewModelScope.launch {
-                        setState { copy(firstEnterState = FirstEnterContract.FirstEnterState.Success) }
-                    }
-                } else {
-                    viewModelScope.launch {
-                        setState { copy(firstEnterState = FirstEnterContract.FirstEnterState.Idle) }
-                    }
-                }
-            }
+        User.phone = phone
+        User.weight = weight
+        User.pressure = pressure
+        User.birthday = birthday
+        firebase.saveUserData(User)
     }
 
     override fun clearState() {

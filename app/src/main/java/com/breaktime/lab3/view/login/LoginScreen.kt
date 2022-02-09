@@ -186,9 +186,15 @@ private fun initObservable(
         viewModel.uiState.collect {
             composableScope.ensureActive()
             when (it.loginState) {
-                is LoginContract.LoginState.Success -> {
+                is LoginContract.LoginState.Menu -> {
                     navController.popBackStack()
                     navController.navigate(Screen.Main.route)
+                    viewModel.clearState()
+                    composableScope.cancel()
+                }
+                is LoginContract.LoginState.FirstEnter -> {
+                    navController.popBackStack()
+                    navController.navigate(Screen.FirstEnter.route)
                     viewModel.clearState()
                     composableScope.cancel()
                 }

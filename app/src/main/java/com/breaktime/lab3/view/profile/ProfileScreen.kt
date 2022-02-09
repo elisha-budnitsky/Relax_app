@@ -108,13 +108,12 @@ fun ProfileScreen(navController: NavHostController) {
                         .padding(start = 30.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    println("user   " + User.user)
-                    Text(User.user.name, fontSize = 24.sp, color = Color.White)
-                    Text(User.user.birthday, fontSize = 18.sp, color = Color.White)
-                    Text("Weight: ${User.user.weight}", fontSize = 18.sp, color = Color.White)
-                    Text("Pressure: ${User.user.pressure}", fontSize = 18.sp, color = Color.White)
-                    Text("Phone: ${User.user.phone}", fontSize = 18.sp, color = Color.White)
-                    Text("Email: ${User.user.email}", fontSize = 18.sp, color = Color.White)
+                    Text(User.name, fontSize = 24.sp, color = Color.White)
+                    Text(User.birthday, fontSize = 18.sp, color = Color.White)
+                    Text("Weight: ${User.weight}", fontSize = 18.sp, color = Color.White)
+                    Text("Pressure: ${User.pressure}", fontSize = 18.sp, color = Color.White)
+                    Text("Phone: ${User.phone}", fontSize = 18.sp, color = Color.White)
+                    Text("Email: ${User.email}", fontSize = 18.sp, color = Color.White)
                 }
             }
 
@@ -214,6 +213,7 @@ private fun initObservable(
                 is ProfileContract.ProfileState.Logout -> {
                     navController.popBackStack()
                     navController.navigate(Screen.Splash.route)
+                    User.resetData()
                     viewModel.clearState()
                     composableScope.cancel()
                 }
@@ -227,7 +227,6 @@ private fun initObservable(
                         "info", it.profileState.info
                     )
                     navController.navigate(Screen.Photo.route)
-
                     viewModel.clearState()
                     composableScope.cancel()
                 }

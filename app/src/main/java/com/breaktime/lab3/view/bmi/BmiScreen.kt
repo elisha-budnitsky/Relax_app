@@ -102,7 +102,8 @@ fun BmiScreen(navController: NavHostController) {
                 Text(
                     text = result,
                     modifier = Modifier
-                        .width(200.dp).padding(top = 10.dp),
+                        .width(200.dp)
+                        .padding(top = 10.dp),
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontSize = 16.sp,

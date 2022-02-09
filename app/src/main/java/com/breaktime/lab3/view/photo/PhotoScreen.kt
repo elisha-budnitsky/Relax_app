@@ -1,7 +1,5 @@
 package com.breaktime.lab3.view.photo
 
-import android.content.Context
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,12 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.breaktime.lab3.view.profile.ProfileContract
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ensureActive
@@ -29,10 +25,8 @@ import org.koin.androidx.compose.get
 @Composable
 fun PhotoScreen(navController: NavHostController, info: PhotoInfo) {
     val viewModel = get<PhotoViewModel>()
-    val context = LocalContext.current
     initObservable(
         rememberCoroutineScope(),
-        context,
         viewModel,
         navController
     )
@@ -56,18 +50,22 @@ fun PhotoScreen(navController: NavHostController, info: PhotoInfo) {
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            TextButton(onClick = { viewModel.setEvent(
-                PhotoContract.Event.OnDeleteImageButtonClick(info)
-            ) }) {
+            TextButton(onClick = {
+                viewModel.setEvent(
+                    PhotoContract.Event.OnDeleteImageButtonClick(info)
+                )
+            }) {
                 Text(
                     text = "delete",
                     fontSize = 20.sp,
                     color = Color.White
                 )
             }
-            TextButton(onClick = { viewModel.setEvent(
-                PhotoContract.Event.OnCloseImageButtonClick
-            ) }) {
+            TextButton(onClick = {
+                viewModel.setEvent(
+                    PhotoContract.Event.OnCloseImageButtonClick
+                )
+            }) {
                 Text(
                     text = "close",
                     fontSize = 20.sp,
@@ -80,7 +78,6 @@ fun PhotoScreen(navController: NavHostController, info: PhotoInfo) {
 
 private fun initObservable(
     composableScope: CoroutineScope,
-    context: Context,
     viewModel: PhotoViewModel,
     navController: NavHostController
 ) {
@@ -100,7 +97,6 @@ private fun initObservable(
                     viewModel.clearState()
                     composableScope.cancel()
                 }
-
             }
         }
     }

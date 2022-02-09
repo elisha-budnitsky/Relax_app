@@ -19,22 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
-import com.breaktime.lab3.data.User
+import com.breaktime.lab3.firebase.Firebase
 import com.breaktime.lab3.navigation.Screen
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.get
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
-    val auth = get<FirebaseAuth>()
+    val firebase = get<Firebase>()
     var startLogoAnimation by remember { mutableStateOf(false) }
     val alphaLogoAnim = animateFloatAsState(
         targetValue = if (startLogoAnimation) 0f else 1f,
@@ -46,18 +39,23 @@ fun SplashScreen(navController: NavHostController) {
         animationSpec = tween(durationMillis = 1000)
     )
 
-    val scope = rememberCoroutineScope()
-    val firebaseDatabase = get<FirebaseDatabase>()
-
     LaunchedEffect(key1 = true) {
-        val client = async { auth.currentUser }
+        val client = async { firebase.loadUser() }
         delay(1000)
         val result = client.await()
         if (result != null) {
-            loadUser(scope, auth, firebaseDatabase)
-            delay(1000)
-            navController.popBackStack()
-            navController.navigate(Screen.Main.route)
+            firebase.loadUserData(
+                onFinishLoading = {
+                    if (it) {
+                        navController.popBackStack()
+                        navController.navigate(Screen.Main.route)
+                    } else {
+                        navController.popBackStack()
+                        navController.navigate(Screen.FirstEnter.route)
+                    }
+                }, onError = {
+                    println(it)
+                })
         } else {
             delay(1000)
             startLogoAnimation = true
@@ -77,40 +75,6 @@ fun SplashScreen(navController: NavHostController) {
             navController.navigate(Screen.Registration.route)
         }
     )
-}
-
-private fun loadUser(
-    scope: CoroutineScope,
-    auth: FirebaseAuth,
-    firebaseDatabase: FirebaseDatabase
-) {
-    val user = auth.currentUser
-    val userID = user!!.uid
-    val rootRef = firebaseDatabase.reference
-    val listIdRef = rootRef.child("Users/$userID/")
-    listIdRef.addListenerForSingleValueEvent(object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            for (ds in dataSnapshot.children) {
-                try {
-                    val value = ds.getValue(String::class.java)
-                    when (ds.key) {
-                        "name" -> User.user.name = value!!
-                        "email" -> User.user.email = value!!
-                        "phone" -> User.user.phone = value!!
-                        "weight" -> User.user.weight = value!!
-                        "pressure" -> User.user.pressure = value!!
-                        "birthday" -> User.user.birthday = value!!
-                    }
-                } catch (e: Exception) {
-                    println("wrong type")
-                }
-                scope.cancel()
-            }
-
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {}
-    })
 }
 
 @Composable

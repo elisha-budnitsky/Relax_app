@@ -1,14 +1,10 @@
 package com.breaktime.lab3.view.login
 
 import android.util.Patterns
-import androidx.lifecycle.viewModelScope
+import com.breaktime.lab3.firebase.Firebase
 import com.breaktime.lab3.view.base.BaseViewModel
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
 
-class LoginViewModel(
-    private val auth: FirebaseAuth
-) :
+class LoginViewModel(private val firebase: Firebase) :
     BaseViewModel<LoginContract.Event, LoginContract.State, LoginContract.Effect>() {
     override fun createInitialState(): LoginContract.State {
         return LoginContract.State(
@@ -44,16 +40,20 @@ class LoginViewModel(
             return
         }
         setState { copy(loginState = LoginContract.LoginState.Loading) }
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                setState { copy(loginState = LoginContract.LoginState.Success) }
-            } else {
-                viewModelScope.launch {
-                    setEffect { LoginContract.Effect.ShowIncorrectDataToast(it.exception!!.message!!) }
-                    setState { copy(loginState = LoginContract.LoginState.Idle) }
-                }
+        firebase.login(
+            email = email,
+            password = password,
+            onSuccess = {
+                firebase.loadUserData(onFinishLoading = { isUserDataSet ->
+                    if (isUserDataSet)
+                        setState { copy(loginState = LoginContract.LoginState.Menu) }
+                    else setState { copy(loginState = LoginContract.LoginState.FirstEnter) }
+                })
+            }, onError = {
+                setEffect { LoginContract.Effect.ShowIncorrectDataToast(it) }
+                setState { copy(loginState = LoginContract.LoginState.Idle) }
             }
-        }
+        )
     }
 
     private fun resetPassword(email: String) {
@@ -62,16 +62,16 @@ class LoginViewModel(
             return
         }
         setState { copy(loginState = LoginContract.LoginState.Loading) }
-        auth.sendPasswordResetEmail(email).addOnCompleteListener {
-            if (it.isSuccessful) {
+        firebase.resetPassword(
+            email = email,
+            onSuccess = {
                 setEffect { LoginContract.Effect.ShowCheckEmailToast }
-            } else {
-                viewModelScope.launch {
-                    setEffect { LoginContract.Effect.ShowIncorrectDataToast(it.exception!!.message!!) }
-                }
+            },
+            onError = {
+                setEffect { LoginContract.Effect.ShowIncorrectDataToast(it) }
             }
-            setState { copy(loginState = LoginContract.LoginState.Idle) }
-        }
+        )
+        setState { copy(loginState = LoginContract.LoginState.Idle) }
     }
 
     override fun clearState() {
