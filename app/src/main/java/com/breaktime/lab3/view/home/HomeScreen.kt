@@ -83,7 +83,7 @@ fun HomeScreen(navController: NavHostController) {
                 painter = if (User.icon == null) painterResource(R.drawable.no_photo)
                 else rememberImagePainter(User.icon),
                 contentDescription = "avatar",
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(43.dp)
                     .clip(CircleShape)

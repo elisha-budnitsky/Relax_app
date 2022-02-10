@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.breaktime.lab3.R
+import com.breaktime.lab3.data.User
+import com.breaktime.lab3.data.icon
 import com.breaktime.lab3.firebase.Firebase
 import com.breaktime.lab3.navigation.Screen
 import kotlinx.coroutines.async
@@ -44,6 +46,9 @@ fun SplashScreen(navController: NavHostController) {
         delay(1000)
         val result = client.await()
         if (result != null) {
+            firebase.loadUserIcon(onSuccess = {
+                User.icon = it
+            })
             firebase.loadUserData(
                 onFinishLoading = {
                     if (it) {

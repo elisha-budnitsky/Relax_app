@@ -174,10 +174,10 @@ fun EditScreen(navController: NavHostController) {
                         val oldPressure = User.pressure
                         val oldBirthday = User.birthday
                         User.name = name
-                        User.phone = name
-                        User.weight = name
-                        User.pressure = name
-                        User.birthday = name
+                        User.phone = phoneNumber
+                        User.weight = weight
+                        User.pressure = pressure
+                        User.birthday = birthday
                         firebase.saveUserData(
                             user = User,
                             onSuccess = {

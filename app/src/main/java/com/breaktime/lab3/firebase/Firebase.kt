@@ -109,16 +109,20 @@ class Firebase(
         }
     }
 
-    fun loadUserIcon(onSuccess: () -> Unit = {}, onError: (String) -> Unit = {}) {
+    fun loadUserIcon(onSuccess: (Uri?) -> Unit = {}, onError: (String) -> Unit = {}) {
         val user = auth.currentUser
         val userID = user!!.uid
         val storageRef = firebaseStorage.reference.storage.getReference("images/users/$userID/icon")
         storageRef.listAll().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val lastImage = task.result!!.items.last()
-                println("download name  " + lastImage.name)
-                println("download name2  " + lastImage)
-                onSuccess()// todo add uri
+                if (task.result!!.items.isEmpty()) {
+                    onSuccess(null)
+                } else {
+                    val lastImage = task.result!!.items.last()
+                    lastImage.downloadUrl.addOnCompleteListener {
+                        onSuccess(it.result)
+                    }
+                }
             } else onError(task.exception?.message ?: "")
         }
     }
