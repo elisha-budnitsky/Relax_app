@@ -14,7 +14,6 @@ import com.breaktime.lab3.MainActivity
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
-
 const val ACCELEROMETER_CHANNEL_ID = "5"
 const val ACCELEROMETER_NOTIFICATION_ID = 123
 
@@ -34,8 +33,6 @@ class AccelerometerService : Service(), SensorEventListener {
         mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager?
         mAccelerometer = mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         mSensorManager?.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
-
-        Toast.makeText(this, "on create", Toast.LENGTH_SHORT).show()
     }
 
     private fun createNotificationChannel() {
@@ -53,7 +50,6 @@ class AccelerometerService : Service(), SensorEventListener {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         showNotification()
-        Toast.makeText(this, "on start", Toast.LENGTH_SHORT).show()
         return START_STICKY
     }
 
@@ -63,7 +59,6 @@ class AccelerometerService : Service(), SensorEventListener {
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
         val notification = Notification
             .Builder(this, ACCELEROMETER_CHANNEL_ID)
-            .setContentText("Music player")
             .setContentIntent(pendingIntent)
             .build()
 
@@ -83,7 +78,5 @@ class AccelerometerService : Service(), SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 }
