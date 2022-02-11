@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 
-const val CHANNEL_ID = "5"
+const val ACCELEROMETER_CHANNEL_ID = "5"
 const val ACCELEROMETER_NOTIFICATION_ID = 123
 
 class AccelerometerService : Service(), SensorEventListener {
@@ -41,7 +41,7 @@ class AccelerometerService : Service(), SensorEventListener {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
-                CHANNEL_ID, "My service channel",
+                ACCELEROMETER_CHANNEL_ID, "My service channel",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
 
@@ -62,7 +62,7 @@ class AccelerometerService : Service(), SensorEventListener {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
         val notification = Notification
-            .Builder(this, CHANNEL_ID)
+            .Builder(this, ACCELEROMETER_CHANNEL_ID)
             .setContentText("Music player")
             .setContentIntent(pendingIntent)
             .build()
