@@ -25,6 +25,10 @@
             android:name=".service.AccelerometerService"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name=".service.MusicService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
