@@ -20,7 +20,7 @@ fun AboutScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF283234))
+            .background(Color(0xFF2D3839))
             .padding(20.dp)
     ) {
         Text(
