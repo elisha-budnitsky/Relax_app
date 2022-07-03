@@ -1,14 +1,23 @@
-# Lab3 BSUIR mobile development
-• Koin<br />
-• OkHttp<br />
-• Compose<br />
-• Coroutines<br />
-• MVI + MVVM
+# Relax app
 
-Api:
-https://rapidapi.com/sameer.kumar/api/aztro
+## General info
+This project acts as a laboratory work at the university. The main purpose of the application is advice on relaxation. Here you can find advice depending on the daily mood, depending on the horoscope. The recommended list of music for listening will depend on the current mood. Also in the application you can save pictures and calculate BMI. 
+
+## Technologies
+Project is created with:
+* Kotlin
+* Compose
+* Coil
+* Accompanist pager
+* Compose navigation
+* Koin
+* OkHttp
+* Gson
+* Coroutines
+* MVI
+* Api: https://rapidapi.com/sameer.kumar/api/aztro
+
 ## Screenshots
-
 <img src="https://user-images.githubusercontent.com/57315212/153718935-1cb00e91-5e1f-42fc-b24e-4283a4d8c351.jpg" height="400"/>
 
 Splash screen with logo and splash screen
